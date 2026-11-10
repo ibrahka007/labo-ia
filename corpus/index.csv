@@ -1,0 +1,21 @@
+id,domaine,titre,version,statut,fichier
+BIO-001,Biologie,Procédure de culture cellulaire,1.2,Approuvé,biologie/BIO-001_culture_cellulaire.md
+BIO-002,Biologie,Instruction de congélation cellulaire,1.0,Approuvé,biologie/BIO-002_congelation_cellulaire.md
+BIO-003,Biologie,Protocole de stérilisation du matériel,1.1,Approuvé,biologie/BIO-003_sterilisation.md
+BIO-004,Biologie,Contrôle qualité des milieux de culture,1.0,Approuvé,biologie/BIO-004_controle_milieux.md
+PHA-001,Santé / Pharma,Gestion des écarts,1.0,Approuvé,sante_pharma/PHA-001_gestion_ecarts.md
+PHA-002,Santé / Pharma,Formulaire de déclaration d'écart,2.0,Approuvé,sante_pharma/PHA-002_formulaire_ecart.md
+PHA-003,Santé / Pharma,Conservation des enregistrements qualité,1.0,Approuvé,sante_pharma/PHA-003_conservation_enregistrements.md
+PHA-004,Santé / Pharma,Politique de conservation des données,1.0,Approuvé,sante_pharma/PHA-004_politique_conservation.md
+PHA-005,Santé / Pharma,Gestion des CAPA,1.1,Approuvé,sante_pharma/PHA-005_gestion_capa.md
+RH-001,RH,Politique de télétravail,2.0,Approuvé,rh/RH-001_teletravail.md
+RH-002,RH,Note d'application télétravail — équipes support,1.0,Approuvé,rh/RH-002_note_teletravail_support.md
+RH-003,RH,Procédure de recrutement,1.2,Approuvé,rh/RH-003_recrutement.md
+RH-004,RH,Charte informatique,1.0,Approuvé,rh/RH-004_charte_informatique.md
+RH-005,RH,Guide d'intégration des nouveaux collaborateurs,1.0,Approuvé,rh/RH-005_guide_integration.md
+DOC-001,Gouvernance documentaire,Procédure de gestion documentaire,1.3,Approuvé,gouvernance_documentaire/DOC-001_gestion_documentaire.md
+DOC-002,Gouvernance documentaire,Instruction de nommage des fichiers,1.0,Approuvé,gouvernance_documentaire/DOC-002_nommage_fichiers.md
+DOC-003,Gouvernance documentaire,Procédure d'archivage,1.1,Approuvé,gouvernance_documentaire/DOC-003_archivage.md
+DOC-004,Gouvernance documentaire,Matrice des habilitations documentaires,1.0,Approuvé,gouvernance_documentaire/DOC-004_habilitations.md
+PHA-001-v1,Santé / Pharma,Gestion des écarts — version 1.0,1.0,Obsolète,versions/PHA-001_v1.0.md
+PHA-001-v2,Santé / Pharma,Gestion des écarts — version 2.0,2.0,Brouillon,versions/PHA-001_v2.0.md

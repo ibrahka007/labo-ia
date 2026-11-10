@@ -1,0 +1,52 @@
+---
+id: PHA-001
+titre: Gestion des écarts
+version: 1.0
+statut: Approuvé
+date_application: 2026-01-15
+proprietaire: Responsable assurance qualité
+domaine: Santé / Pharma
+classification: Fictif — exercice
+---
+
+# PHA-001 — Gestion des écarts
+
+## 1. Objet
+
+Décrire l'identification, la déclaration, l'investigation et la clôture des
+écarts qualité du produit fictif NOVALIS-TEST.
+
+## 2. Responsabilités
+
+- L'opérateur identifie et signale l'écart.
+- Le chargé qualité ouvre la fiche d'écart.
+- L'assurance qualité (AQ) classe et valide l'investigation.
+- Le responsable métier fournit les éléments techniques.
+
+## 3. Déclaration
+
+- Utiliser le formulaire **FRM-PHA-001** ([PHA-002]).
+- **Ouvrir la fiche sous 2 jours ouvrés** après identification.
+- Enregistrer la date, le lot, l'équipement et la description.
+
+## 4. Classification
+
+- **Mineur** : impact limité, sans effet produit.
+- **Majeur** : impact potentiel sur la qualité du produit.
+- **Critique** : risque pour le patient ou rupture de chaîne du froid.
+
+## 5. Investigation et CAPA
+
+- Réaliser l'investigation sous 10 jours ouvrés.
+- Ouvrir une CAPA selon [PHA-005] si l'écart est majeur ou critique.
+- **Clôturer l'écart sous 30 jours ouvrés.**
+
+## 6. Conservation
+
+- Conserver le dossier d'écart **5 ans** après clôture ([PHA-003]).
+
+## 7. Références
+
+- [PHA-002] Formulaire de déclaration d'écart.
+- [PHA-003] Conservation des enregistrements qualité.
+- [PHA-005] Gestion des CAPA.

@@ -69,7 +69,7 @@ def construire_document():
         document,
         ["Champ", "Valeur"],
         [
-            ("Version", "1.2"),
+            ("Version", "1.3"),
             ("Date", "08/11/2026"),
             ("Statut", "Étape de comparaison documentaire validée"),
             ("Périmètre", "Projet premier-test (comparaison de fichiers texte et PDF)"),
@@ -302,12 +302,61 @@ def construire_document():
         "Personnaliser les messages d'erreur selon le contexte d'usage.",
         "Décider de l'ajout d'un OCR (Tesseract ou Vision macOS) pour les PDF image.",
         "Afficher le nom réel des fichiers comparés dans l'en-tête du diff.",
-        "Ajouter un formulaire fictif lié (FRM-AR-001) et rechercher les passages impactés.",
-        "Préparer le corpus annoté et les critères d'évaluation avant d'introduire le RAG.",
+        "Étendre le corpus fictif aux formats Word et Excel.",
+        "Construire le moteur d'indexation (embeddings + Qdrant) sur le corpus.",
+        "Définir le jeu de questions d'évaluation et les seuils d'acceptation.",
     ]:
         document.add_paragraph(action, style="List Number")
 
-    document.add_heading("11. Historique des révisions", level=1)
+    document.add_heading("11. Corpus fictif (Mock Corpus)", level=1)
+    document.add_paragraph(
+        "Un corpus entièrement fictif a été créé dans "
+        "/Users/ibrahimkamate/Documents/labo-ia/corpus. Il sert de terrain "
+        "d'entraînement pour la comparaison, la détection de contradictions et "
+        "l'analyse d'impact, sans aucune donnée réelle ou sensible."
+    )
+    ajouter_tableau(
+        document,
+        ["Domaine", "Documents", "Identifiants"],
+        [
+            ("Biologie", "4", "BIO-001 à BIO-004"),
+            ("Santé / Pharma", "5", "PHA-001 à PHA-005"),
+            ("Ressources humaines", "5", "RH-001 à RH-005"),
+            ("Gouvernance documentaire", "4", "DOC-001 à DOC-004"),
+            ("Versions de comparaison", "2", "PHA-001 v1.0 et v2.0"),
+        ],
+    )
+    document.add_paragraph(
+        "Chaque document comporte des métadonnées (identifiant, version, statut, "
+        "propriétaire, domaine) et des références croisées. Un index CSV recense "
+        "les fichiers."
+    )
+    document.add_paragraph(
+        "Des anomalies sont introduites volontairement et documentées dans "
+        "annotations/cas_de_test.md :"
+    )
+    for anomalie in [
+        "Délai de déclaration d'écart : 2 jours (PHA-001) contre 5 jours (PHA-002).",
+        "Conservation : 5 ans (PHA-003) contre 10 ans (PHA-004).",
+        "Télétravail : 3 jours (RH-001) contre 2 jours pour le support (RH-002).",
+        "Recrutement : 3 entretiens (RH-003) contre 2 dans le guide d'intégration (RH-005).",
+        "Culture cellulaire : milieu renouvelé tous les 2 jours (BIO-001) contre un "
+        "passage tous les 3 jours (BIO-002).",
+    ]:
+        document.add_paragraph(anomalie, style="List Bullet")
+    document.add_paragraph(
+        "Six cas de test (C1 à C6) décrivent les impacts attendus, y compris un cas "
+        "sans preuve suffisante destiné à vérifier l'abstention du système. Ces "
+        "cas sont des hypothèses à valider, pas une vérité métier."
+    )
+    document.add_paragraph(
+        "Validation réalisée : la paire versions/PHA-001_v1.0.md et "
+        "versions/PHA-001_v2.0.md a été comparée avec succès par le prototype "
+        "(changements de délais, de classification, de conservation et de "
+        "responsabilités identifiés)."
+    )
+
+    document.add_heading("12. Historique des révisions", level=1)
     ajouter_tableau(
         document,
         ["Version", "Date", "Nature de la modification"],
@@ -327,6 +376,12 @@ def construire_document():
                 "1.2",
                 "08/11/2026",
                 "Ajout en annexe du code Python du projet.",
+            ),
+            (
+                "1.3",
+                "11/11/2026",
+                "Ajout du corpus fictif (22 documents, 5 domaines) et des cas de "
+                "test d'impact.",
             ),
         ],
     )

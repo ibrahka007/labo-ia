@@ -14,6 +14,19 @@ COLLECTION = "corpus_labo_ia"
 TAILLE_CHUNK_MAX = 1600
 CHEVAUCHEMENT = 150
 
+# Seuil provisoire calibré sur 18 cas (voir rag/calibrer_seuil.py).
+# Marge faible : à re-mesurer sur un jeu plus large avant usage réel.
+SEUIL_ABSTENTION = 0.65
+
+# Marqueurs indiquant qu'un passage ne formule pas une règle établie.
+INDICES_RESERVE = (
+    "hypothèse",
+    "à confirmer",
+    "sous réserve",
+    "non confirmé",
+    "à valider",
+)
+
 
 @dataclass
 class Chunk:
@@ -169,3 +182,32 @@ def embed_textes(textes: List[str], modele: str, lot: int = 16) -> List[List[flo
 
 def embed_texte(texte: str, modele: str) -> List[float]:
     return embed_textes([texte], modele)[0]
+
+
+def decide_reponse(points, seuil: float = SEUIL_ABSTENTION):
+    """Décide s'il existe une preuve suffisante pour répondre.
+
+    Retourne un couple (points retenus, motif) :
+    - motif « ok » : au moins un passage dépasse le seuil ;
+    - motif « preuve insuffisante » : aucun passage ne le dépasse ;
+    - motif « aucun résultat » : l'index n'a rien renvoyé.
+    """
+    if not points:
+        return [], "aucun résultat"
+
+    retenus = [
+        point
+        for point in points
+        if float(getattr(point, "score", 0.0) or 0.0) >= seuil
+    ]
+
+    if not retenus:
+        return [], "preuve insuffisante"
+
+    return retenus, "ok"
+
+
+def detecter_reserve(texte: str) -> list:
+    """Retourne les marqueurs de réserve présents dans un passage."""
+    contenu = (texte or "").lower()
+    return [indice for indice in INDICES_RESERVE if indice in contenu]

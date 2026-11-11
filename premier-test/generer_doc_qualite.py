@@ -70,7 +70,7 @@ def construire_document():
         document,
         ["Champ", "Valeur"],
         [
-            ("Version", "1.6"),
+            ("Version", "1.7"),
             ("Date", "08/11/2026"),
             ("Statut", "Étape de comparaison documentaire validée"),
             ("Périmètre", "Projet premier-test (comparaison de fichiers texte et PDF)"),
@@ -537,7 +537,71 @@ def construire_document():
     )
     document.add_paragraph("Résultat : environ 10,8 Mo libérés.", style="List Bullet")
 
-    document.add_heading("15. Historique des révisions", level=1)
+    document.add_heading("15. Seuil d'abstention et réserves", level=1)
+    document.add_paragraph(
+        "La recherche sémantique seule ne sait pas dire « je ne sais pas » : une "
+        "question hors corpus remonte malgré tout cinq passages, avec des scores "
+        "de 0,41 à 0,65. Deux garde-fous ont donc été ajoutés."
+    )
+    document.add_paragraph("Méthode de calibration", style="Heading 2")
+    document.add_paragraph(
+        "Deux populations ont été mesurées avec le même index : cinq questions "
+        "dont la réponse existe dans le corpus (C1 à C5) et treize questions hors "
+        "corpus, dont le cas C6 sur la conservation des dossiers RH."
+    )
+    ajouter_tableau(
+        document,
+        ["Population", "Nombre", "Score top1 observé"],
+        [
+            ("Réponse dans le corpus", "5", "0,651 à 0,768"),
+            ("Hors corpus (abstention attendue)", "13", "0,409 à 0,650"),
+        ],
+    )
+    document.add_paragraph(
+        "Un seuil de 0,65 sépare les deux populations sur cet échantillon : "
+        "5/5 réponses conservées, 13/13 abstentions correctes, soit 18/18 cas "
+        "traités correctement et 13 fausses réponses évitées."
+    )
+    document.add_paragraph("Limite majeure de cette calibration", style="Heading 2")
+    document.add_paragraph(
+        "La marge est quasi nulle. Le cas légitime le plus bas (C4, processus de "
+        "recrutement) obtient 0,651 et le cas d'abstention le plus haut (C6) "
+        "obtient 0,650 : un écart d'un millième. Le succès du seuil sur C6 dépend "
+        "donc du quatrième chiffre du score et n'est pas robuste. Baisser le seuil "
+        "fait répondre sur C6 ; le monter fait refuser C4."
+    )
+    document.add_paragraph(
+        "Conclusion honnête : en recherche dense seule, C4 et C6 ne sont pas "
+        "séparables de façon fiable. Le seuil de 0,65 est retenu comme valeur "
+        "provisoire, à re-mesurer sur le jeu de 100 cas (issue 13) et à consolider "
+        "par la recherche hybride et un reranker (issue 8)."
+    )
+    document.add_paragraph("Second garde-fou : détection de réserve", style="Heading 2")
+    document.add_paragraph(
+        "Certains passages ne formulent pas une règle établie. Le système détecte "
+        "les marqueurs « hypothèse », « à confirmer », « sous réserve », "
+        "« non confirmé » et « à valider », puis affiche explicitement que la "
+        "valeur ne doit pas être présentée comme une obligation."
+    )
+    document.add_paragraph(
+        "Exemple vérifié : interrogé sur la conservation des dossiers RH, le "
+        "système s'abstient (score 0,650) et précise que le meilleur passage "
+        "(PHA-004) présente la durée de cinq ans comme une hypothèse à confirmer "
+        "juridiquement. Avec un seuil abaissé à 0,60, le passage est affiché mais "
+        "accompagné de la réserve : la nuance n'est jamais perdue."
+    )
+    document.add_paragraph("Mise en œuvre", style="Heading 2")
+    for ligne_seuil in [
+        "Seuil par défaut : SEUIL_ABSTENTION = 0,65 dans rag/rag_lib.py.",
+        "Décision centralisée dans decide_reponse(), testable sans Qdrant.",
+        "Option --seuil dans rag/search.py ; --seuil 0 désactive l'abstention.",
+        "Calibration reproductible : rag/calibrer_seuil.py.",
+        "Évaluation : rag/evaluer.py rapporte rappel et abstentions.",
+        "Tests : 17/17 réussis, dont 10 sur la décision et les réserves.",
+    ]:
+        document.add_paragraph(ligne_seuil, style="List Bullet")
+
+    document.add_heading("16. Historique des révisions", level=1)
     ajouter_tableau(
         document,
         ["Version", "Date", "Nature de la modification"],
@@ -583,6 +647,13 @@ def construire_document():
                 "Consolidation du dépôt : suppression des trois copies obsolètes "
                 "d'AI_Project_repo après archivage et vérification ; board GitHub "
                 "complété (15 issues).",
+            ),
+            (
+                "1.7",
+                "11/11/2026",
+                "Ajout du seuil d'abstention (0,65) et de la détection de réserve ; "
+                "calibration sur 18 cas, 13 fausses réponses évitées ; limite de "
+                "marge documentée.",
             ),
         ],
     )
@@ -636,6 +707,13 @@ def construire_document():
         "Évaluation du rappel sur les cas C1 à C6."
     )
     ajouter_bloc_code(document, RAG / "evaluer.py")
+
+    document.add_page_break()
+    document.add_heading("Annexe H — rag/calibrer_seuil.py", level=1)
+    document.add_paragraph(
+        "Calibration du seuil d'abstention sur les cas connus et hors corpus."
+    )
+    ajouter_bloc_code(document, RAG / "calibrer_seuil.py")
 
     document.add_paragraph()
     document.add_paragraph(

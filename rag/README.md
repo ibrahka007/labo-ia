@@ -21,8 +21,11 @@ premier-test/.venv/bin/python rag/index_corpus.py
 # 2. Interroger l'index
 premier-test/.venv/bin/python rag/search.py "Quel est le délai de déclaration d'un écart ?"
 
-# 3. Évaluer le rappel sur les cas C1–C6
+# 3. Évaluer le rappel et l'abstention sur C1–C6
 premier-test/.venv/bin/python rag/evaluer.py
+
+# 4. Recalibrer le seuil d'abstention
+premier-test/.venv/bin/python rag/calibrer_seuil.py
 ```
 
 ## Fonctionnement
@@ -35,9 +38,25 @@ premier-test/.venv/bin/python rag/evaluer.py
   exécution d'`index_corpus.py`.
 - `rag/index_meta.json` enregistre le modèle, la dimension et le nombre de chunks.
 
+## Abstention
+
+`search.py` refuse de répondre quand aucun passage n'atteint le seuil
+`SEUIL_ABSTENTION` (0,65 par défaut, `rag_lib.py`). L'option `--seuil` permet de
+le changer (`--seuil 0` désactive l'abstention).
+
+Un second garde-fou signale les passages qui ne formulent pas une règle établie
+(« hypothèse », « à confirmer », « sous réserve »…) : la valeur est alors
+présentée comme à confirmer, jamais comme une obligation.
+
+Mesure actuelle sur 18 cas (5 avec réponse, 13 hors corpus) : 5/5 réponses
+conservées, 13/13 abstentions correctes. **La marge est faible** (0,651 pour le
+cas légitime le plus bas, 0,650 pour le cas d'abstention le plus haut) : le seuil
+est provisoire et doit être re-mesuré sur un jeu plus large.
+
 ## Limites
 
 - Recherche dense uniquement : pas encore de recherche lexicale ni de reranker.
-- Aucun seuil d'abstention calibré : les scores servent d'observation.
+- Seuil d'abstention calibré sur 18 cas seulement : marge quasi nulle, à
+  consolider sur le jeu de 100 cas avant tout usage décisionnel.
 - Les documents image (scans) ne sont pas couverts sans OCR.
 - Ne pas utiliser en production : corpus fictif et validation humaine requise.

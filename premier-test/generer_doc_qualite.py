@@ -10,6 +10,7 @@ from docx.shared import Pt
 
 SORTIE = Path("/Users/ibrahimkamate/Downloads/AI_PROJECT/Quality Doc AI Project.docx")
 DOSSIER = Path(__file__).resolve().parent
+RAG = DOSSIER.parent / "rag"
 
 
 def ajouter_tableau(document, entetes, lignes):
@@ -69,7 +70,7 @@ def construire_document():
         document,
         ["Champ", "Valeur"],
         [
-            ("Version", "1.3"),
+            ("Version", "1.4"),
             ("Date", "08/11/2026"),
             ("Statut", "Étape de comparaison documentaire validée"),
             ("Périmètre", "Projet premier-test (comparaison de fichiers texte et PDF)"),
@@ -303,8 +304,9 @@ def construire_document():
         "Décider de l'ajout d'un OCR (Tesseract ou Vision macOS) pour les PDF image.",
         "Afficher le nom réel des fichiers comparés dans l'en-tête du diff.",
         "Étendre le corpus fictif aux formats Word et Excel.",
-        "Construire le moteur d'indexation (embeddings + Qdrant) sur le corpus.",
-        "Définir le jeu de questions d'évaluation et les seuils d'acceptation.",
+        "Ajouter une recherche hybride (dense + lexicale) et un reranker mesuré.",
+        "Calibrer un seuil d'abstention sur les scores de retrieval.",
+        "Construire le moteur d'analyse d'impact au-dessus du retriever.",
     ]:
         document.add_paragraph(action, style="List Number")
 
@@ -356,7 +358,79 @@ def construire_document():
         "responsabilités identifiés)."
     )
 
-    document.add_heading("12. Historique des révisions", level=1)
+    document.add_heading("12. Indexation RAG du corpus", level=1)
+    document.add_paragraph(
+        "Le corpus fictif a été indexé dans une base vectorielle locale afin de "
+        "permettre la recherche sémantique et de préparer l'analyse d'impact. "
+        "Aucun service cloud ni conteneur Docker n'est utilisé."
+    )
+    ajouter_tableau(
+        document,
+        ["Composant", "Choix retenu", "Justification"],
+        [
+            (
+                "Découpage",
+                "Par section Markdown (##), fenêtres de 1600 caractères",
+                "Conserver le contexte et la section citable",
+            ),
+            (
+                "Embeddings",
+                "bge-m3 via Ollama (1024 dimensions)",
+                "Multilingue, local, adapté au français",
+            ),
+            (
+                "Base vectorielle",
+                "Qdrant en mode local (fichiers)",
+                "Aucun serveur ni Docker ; persistant et reconstructible",
+            ),
+            ("Collection", "corpus_labo_ia", "Une collection dédiée au corpus"),
+        ],
+    )
+    document.add_paragraph(
+        "Résultat de l'indexation : 143 chunks issus de 20 fichiers, embeddings "
+        "calculés en 2,0 secondes sur la machine locale."
+    )
+    document.add_paragraph("Commandes du pipeline :")
+    for commande in [
+        "premier-test/.venv/bin/python rag/index_corpus.py",
+        "premier-test/.venv/bin/python rag/search.py \"question\"",
+        "premier-test/.venv/bin/python rag/evaluer.py",
+    ]:
+        document.add_paragraph(commande, style="List Bullet")
+
+    document.add_paragraph(
+        "Évaluation du rappel sur les cas C1 à C5 (documents attendus dans le "
+        "top 5) :"
+    )
+    ajouter_tableau(
+        document,
+        ["Cas", "Question", "Résultat"],
+        [
+            ("C1", "Délai de déclaration d'écart", "OK — PHA-001, PHA-002"),
+            ("C2", "Conservation des enregistrements", "OK — PHA-003, DOC-003"),
+            ("C3", "Télétravail équipes support", "OK — RH-002"),
+            ("C4", "Entretiens de recrutement", "OK — RH-003, RH-005"),
+            ("C5", "Renouvellement du milieu de culture", "OK — BIO-001"),
+        ],
+    )
+    document.add_paragraph(
+        "Rappel@top5 : 5/5. Le cas C6 (conservation des dossiers RH) remonte "
+        "PHA-004 avec un score de 0,65 ; ce document mentionne une durée de 5 ans "
+        "pour les données RH administratives en la présentant comme une hypothèse "
+        "à confirmer. Le système ne doit donc pas répondre comme à une règle "
+        "établie : la nuance « hypothèse » doit être restituée."
+    )
+    document.add_paragraph("Limites de cette indexation :")
+    for limite_rag in [
+        "Recherche dense uniquement : pas encore de recherche lexicale ni de reranker.",
+        "Aucun seuil d'abstention calibré ; les scores sont observés, pas décisionnels.",
+        "Les scores ne sont pas comparables entre modèles d'embeddings.",
+        "Les PDF image restent hors périmètre sans OCR.",
+        "Validation humaine toujours requise avant toute conclusion d'impact.",
+    ]:
+        document.add_paragraph(limite_rag, style="List Bullet")
+
+    document.add_heading("13. Historique des révisions", level=1)
     ajouter_tableau(
         document,
         ["Version", "Date", "Nature de la modification"],
@@ -383,6 +457,12 @@ def construire_document():
                 "Ajout du corpus fictif (22 documents, 5 domaines) et des cas de "
                 "test d'impact.",
             ),
+            (
+                "1.4",
+                "11/11/2026",
+                "Ajout de l'indexation RAG locale (bge-m3, Qdrant, 143 chunks) et "
+                "des résultats d'évaluation C1–C6.",
+            ),
         ],
     )
 
@@ -407,6 +487,34 @@ def construire_document():
         "Outil de génération du présent document qualité."
     )
     ajouter_bloc_code(document, DOSSIER / "generer_doc_qualite.py")
+
+    document.add_page_break()
+    document.add_heading("Annexe D — rag/rag_lib.py", level=1)
+    document.add_paragraph(
+        "Bibliothèque du pipeline RAG : parsing, découpage et embeddings."
+    )
+    ajouter_bloc_code(document, RAG / "rag_lib.py")
+
+    document.add_page_break()
+    document.add_heading("Annexe E — rag/index_corpus.py", level=1)
+    document.add_paragraph(
+        "Construction de l'index Qdrant local."
+    )
+    ajouter_bloc_code(document, RAG / "index_corpus.py")
+
+    document.add_page_break()
+    document.add_heading("Annexe F — rag/search.py", level=1)
+    document.add_paragraph(
+        "Recherche sémantique dans l'index."
+    )
+    ajouter_bloc_code(document, RAG / "search.py")
+
+    document.add_page_break()
+    document.add_heading("Annexe G — rag/evaluer.py", level=1)
+    document.add_paragraph(
+        "Évaluation du rappel sur les cas C1 à C6."
+    )
+    ajouter_bloc_code(document, RAG / "evaluer.py")
 
     document.add_paragraph()
     document.add_paragraph(

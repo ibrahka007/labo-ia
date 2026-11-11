@@ -11,3 +11,7 @@ __pycache__/
 
 # Divers
 *.log
+
+# Index RAG (reconstructible)
+rag/index_qdrant/
+rag/index_meta.json

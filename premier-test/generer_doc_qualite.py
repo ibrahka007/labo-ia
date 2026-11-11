@@ -70,7 +70,7 @@ def construire_document():
         document,
         ["Champ", "Valeur"],
         [
-            ("Version", "1.4"),
+            ("Version", "1.5"),
             ("Date", "08/11/2026"),
             ("Statut", "Étape de comparaison documentaire validée"),
             ("Périmètre", "Projet premier-test (comparaison de fichiers texte et PDF)"),
@@ -430,7 +430,61 @@ def construire_document():
     ]:
         document.add_paragraph(limite_rag, style="List Bullet")
 
-    document.add_heading("13. Historique des révisions", level=1)
+    document.add_heading("13. Gestion de projet GitHub", level=1)
+    document.add_paragraph(
+        "Le suivi du projet est centralisé sur le board GitHub Projects "
+        "« AI Project_IK_GEDs » : "
+        "https://github.com/users/ibrahka007/projects/1. "
+        "Chaque étape du laboratoire y figure sous forme d'issue reliée au "
+        "dépôt https://github.com/ibrahka007/labo-ia, avec un statut, une "
+        "priorité et une taille."
+    )
+    document.add_paragraph(
+        "Le board utilise trois champs personnalisés : Statut (Backlog, Ready, "
+        "In progress, In review, Done), Priorité (P0, P1, P2) et Taille "
+        "(XS, S, M, L, XL)."
+    )
+    ajouter_tableau(
+        document,
+        ["Statut", "Nombre", "Contenu"],
+        [
+            ("Done", "7", "Environnement, prototype de comparaison, gestion des "
+                          "erreurs, document qualité, corpus fictif, indexation "
+                          "RAG, sous-agents"),
+            ("Ready", "1", "Moteur d'analyse d'impact au-dessus du RAG"),
+            ("Backlog", "7", "Recherche hybride, seuil d'abstention, "
+                             "Word/Excel et OCR, interface web, jeu de 100 cas, "
+                             "automatisation du document qualité, intégration "
+                             "continue"),
+            ("Total", "15", "7 étapes terminées, 8 actions ouvertes"),
+        ],
+    )
+    document.add_paragraph("Répartition par priorité :")
+    for ligne_priorite in [
+        "P0 (critique) : indexation RAG (terminée), seuil d'abstention, "
+        "moteur d'analyse d'impact.",
+        "P1 (important) : prototype de comparaison, gestion des erreurs, "
+        "document qualité, corpus fictif, recherche hybride, interface web, "
+        "jeu de 100 cas.",
+        "P2 (secondaire) : environnement, sous-agents, Word/Excel et OCR, "
+        "automatisation du document qualité, intégration continue.",
+    ]:
+        document.add_paragraph(ligne_priorite, style="List Bullet")
+    document.add_paragraph(
+        "Chaque issue décrit le contexte, le résultat attendu, les critères "
+        "d'acceptation, les fichiers concernés et les dépendances. Une étape "
+        "n'est déclarée terminée que si le code, les tests et le document "
+        "qualité sont à jour."
+    )
+    document.add_paragraph(
+        "Anomalie rencontrée lors de la synchronisation : l'identifiant de "
+        "l'option « L » du champ Taille était erroné (un caractère manquant), "
+        "ce qui provoquait le rejet de la mise à jour. Correction appliquée et "
+        "script rendu idempotent (relance sans doublon) avec reprise sur "
+        "erreur réseau."
+    )
+
+    document.add_heading("14. Historique des révisions", level=1)
     ajouter_tableau(
         document,
         ["Version", "Date", "Nature de la modification"],
@@ -462,6 +516,13 @@ def construire_document():
                 "11/11/2026",
                 "Ajout de l'indexation RAG locale (bge-m3, Qdrant, 143 chunks) et "
                 "des résultats d'évaluation C1–C6.",
+            ),
+            (
+                "1.5",
+                "11/11/2026",
+                "Ajout de la section Gestion de projet GitHub : board, 15 issues, "
+                "statuts, priorités et tailles ; sous-agents expert métier et chef "
+                "de projet.",
             ),
         ],
     )

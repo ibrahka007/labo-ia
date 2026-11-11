@@ -1,7 +1,7 @@
 ---
 description: Use to manage the labo-ia project on GitHub, especially the project board https://github.com/users/ibrahka007/projects/1. Trigger on chef de projet, roadmap, backlog, issues, milestones, GitHub Projects, planning, suivi.
 mode: subagent
-color: cyan
+color: "#06b6d4"
 permission:
   edit: allow
   bash:

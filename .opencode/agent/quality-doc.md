@@ -1,7 +1,7 @@
 ---
 description: Use to update the Word quality document "Quality Doc AI Project" after any project step, keeping version, history and Python annexes in sync. Trigger on document qualité, Quality Doc, mise à jour du suivi.
 mode: subagent
-color: orange
+color: "#f97316"
 permission:
   edit: allow
   bash:

@@ -1,7 +1,7 @@
 ---
 description: Use for domain expertise in HR and HR regulation, biology, quality management and regulatory affairs (pharma/health). Trigger on réglementation RH, droit du travail, biologie, qualité, GxP, affaires réglementaires, conformité, RGPD, données de santé.
 mode: subagent
-color: red
+color: "#ef4444"
 permission:
   edit: deny
   bash:

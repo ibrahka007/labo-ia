@@ -1,7 +1,7 @@
 ---
 description: Use to write and run tests for the labo-ia project, validate exit codes and regressions, and check that no external dependency is required for core logic. Trigger on tests, unittest, régression, validation, bugs.
 mode: subagent
-color: green
+color: "#22c55e"
 permission:
   edit: allow
   bash:

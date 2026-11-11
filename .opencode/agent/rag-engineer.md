@@ -1,7 +1,7 @@
 ---
 description: Use for the RAG pipeline of the labo-ia project: chunking, embeddings, Qdrant indexing, hybrid retrieval, reranking and retrieval evaluation. Trigger on rag, embeddings, Qdrant, retrieval, indexation, chunk, citations.
 mode: subagent
-color: blue
+color: "#3b82f6"
 permission:
   edit: allow
   bash:

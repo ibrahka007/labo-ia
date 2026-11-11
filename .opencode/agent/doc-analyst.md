@@ -1,7 +1,7 @@
 ---
 description: Use to analyse the fictive corpus, detect contradictions and document impacts, and produce evidence-backed findings with exact citations. Trigger on analyse d'impact, contradiction, corpus, documents liés, citations.
 mode: subagent
-color: purple
+color: "#a855f7"
 permission:
   edit: deny
   bash:

@@ -70,7 +70,7 @@ def construire_document():
         document,
         ["Champ", "Valeur"],
         [
-            ("Version", "1.7"),
+            ("Version", "1.8"),
             ("Date", "08/11/2026"),
             ("Statut", "Étape de comparaison documentaire validée"),
             ("Périmètre", "Projet premier-test (comparaison de fichiers texte et PDF)"),
@@ -226,6 +226,22 @@ def construire_document():
                 "Risque de confusion dans les commandes",
                 "Nom réel documenté ; renommage possible sur demande",
                 "Documentée",
+            ),
+            (
+                "A7",
+                "Sous-agents ignorés : OpenCode V2 rejetait la couleur déclarée "
+                "(« purple », « blue »…) et le dièse non quoté en YAML",
+                "Les six agents du projet n'étaient jamais chargés",
+                "Couleurs converties en hexadécimal et entourées de guillemets",
+                "Corrigée",
+            ),
+            (
+                "A8",
+                "Agent Plan inutilisable : modèle par défaut claude-fable-5-2 avec "
+                "clé API Anthropic refusée (invalid x-api-key)",
+                "Erreur immédiate, aucun plan produit",
+                "Modèle par défaut fixé à opencode/deepseek-v4.1-flash-free",
+                "Corrigée",
             ),
         ],
     )
@@ -654,6 +670,12 @@ def construire_document():
                 "Ajout du seuil d'abstention (0,65) et de la détection de réserve ; "
                 "calibration sur 18 cas, 13 fausses réponses évitées ; limite de "
                 "marge documentée.",
+            ),
+            (
+                "1.8",
+                "11/11/2026",
+                "Correction du chargement des sous-agents (couleurs) et du modèle "
+                "par défaut de l'agent Plan ; anomalies A7 et A8 documentées.",
             ),
         ],
     )

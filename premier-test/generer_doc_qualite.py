@@ -70,7 +70,7 @@ def construire_document():
         document,
         ["Champ", "Valeur"],
         [
-            ("Version", "1.5"),
+            ("Version", "1.6"),
             ("Date", "08/11/2026"),
             ("Statut", "Étape de comparaison documentaire validée"),
             ("Périmètre", "Projet premier-test (comparaison de fichiers texte et PDF)"),
@@ -484,7 +484,60 @@ def construire_document():
         "erreur réseau."
     )
 
-    document.add_heading("14. Historique des révisions", level=1)
+    document.add_heading("14. Consolidation du dépôt et nettoyage", level=1)
+    document.add_paragraph(
+        "Trois copies obsolètes du dépôt historique AI_Project_repo occupaient "
+        "encore le disque et pouvaient laisser croire à plusieurs versions du "
+        "projet. Elles ont été supprimées après vérification et sauvegarde."
+    )
+    ajouter_tableau(
+        document,
+        ["Emplacement supprimé", "Nature", "Contenu vérifié avant suppression"],
+        [
+            (
+                "~/AI_Project_repo",
+                "Clone Git du dépôt historique",
+                "Aucun commit non poussé ; copie partielle de labo-ia",
+            ),
+            (
+                "~/Documents/GitHub/AI_Project_repo",
+                "Clone GitHub Desktop",
+                "Synchronisé avec origin/main ; échantillons déjà présents "
+                "dans ~/Downloads/AI_PROJECT",
+            ),
+            (
+                "~/copilot-worktrees/AI_Project_repo",
+                "Worktrees Copilot du clone ci-dessus",
+                "Retirés avec git worktree remove --force puis prune",
+            ),
+        ],
+    )
+    document.add_paragraph(
+        "Contrôles effectués avant suppression : les cinq PDF d'échantillons "
+        "(AR-001_v1, AR-001_v2, 01_pdf_endommage, 02_pdf_illisible, "
+        "03_pdf_sans_texte_extractible) sont identiques octet pour octet à ceux "
+        "de ~/Downloads/AI_PROJECT ; aucun commit local n'était en attente ; "
+        "l'archive de sécurité a été testée (321 entrées)."
+    )
+    document.add_paragraph(
+        "Une archive complète, incluant l'historique Git et la branche locale "
+        "non poussée ibrahka007-ai-project-readme, a été créée avant "
+        "suppression : ~/Documents/_archive_AI_Project_2026-11-11.tar.gz "
+        "(9,9 Mo). Restauration possible avec :"
+    )
+    document.add_paragraph(
+        "tar -xzf ~/Documents/_archive_AI_Project_2026-11-11.tar.gz -C ~/",
+        style="List Bullet",
+    )
+    document.add_paragraph(
+        "Après nettoyage, un seul dépôt de travail subsiste : "
+        "~/Documents/labo-ia, relié à github.com/ibrahka007/labo-ia. Le document "
+        "qualité reste dans ~/Downloads/AI_PROJECT. Les copies supprimées ne "
+        "contenaient aucune donnée unique."
+    )
+    document.add_paragraph("Résultat : environ 10,8 Mo libérés.", style="List Bullet")
+
+    document.add_heading("15. Historique des révisions", level=1)
     ajouter_tableau(
         document,
         ["Version", "Date", "Nature de la modification"],
@@ -523,6 +576,13 @@ def construire_document():
                 "Ajout de la section Gestion de projet GitHub : board, 15 issues, "
                 "statuts, priorités et tailles ; sous-agents expert métier et chef "
                 "de projet.",
+            ),
+            (
+                "1.6",
+                "11/11/2026",
+                "Consolidation du dépôt : suppression des trois copies obsolètes "
+                "d'AI_Project_repo après archivage et vérification ; board GitHub "
+                "complété (15 issues).",
             ),
         ],
     )

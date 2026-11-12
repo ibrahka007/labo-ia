@@ -10,6 +10,7 @@ from pathlib import Path
 from qdrant_client import QdrantClient
 from qdrant_client.models import Distance, PointStruct, VectorParams
 
+from lexical import CHEMIN_DEFAUT as INDEX_LEXICAL, construire_index
 from rag_lib import COLLECTION, collecter_chunks, embed_textes
 
 
@@ -19,6 +20,9 @@ def main() -> int:
     parseur.add_argument("--index", default="rag/index_qdrant")
     parseur.add_argument("--model", default="bge-m3")
     parseur.add_argument("--lot", type=int, default=16)
+    parseur.add_argument(
+        "--index-lexical", default=INDEX_LEXICAL, help="Fichier SQLite (FTS5)."
+    )
     arguments = parseur.parse_args()
 
     racine = Path(arguments.corpus).resolve()
@@ -78,16 +82,20 @@ def main() -> int:
         "fichiers": len(documents),
         "duree_embeddings_s": round(duree, 1),
         "index": str(Path(arguments.index).resolve()),
+        "index_lexical": str(Path(arguments.index_lexical).resolve()),
     }
     Path("rag/index_meta.json").write_text(
         json.dumps(metadonnees, ensure_ascii=False, indent=2), encoding="utf-8"
     )
 
     print(
-        f"Index créé : {len(chunks)} points, dimension {dimension}, "
+        f"Index vectoriel : {len(chunks)} points, dimension {dimension}, "
         f"embeddings en {duree:.1f} s."
     )
     print(f"Index : {Path(arguments.index).resolve()}")
+
+    nombre = construire_index(chunks, arguments.index_lexical)
+    print(f"Index lexical : {nombre} chunks dans {Path(arguments.index_lexical).resolve()}")
     return 0
 
 

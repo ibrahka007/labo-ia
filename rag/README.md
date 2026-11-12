@@ -18,14 +18,21 @@ Depuis la racine `labo-ia/` :
 # 1. Construire l'index
 premier-test/.venv/bin/python rag/index_corpus.py
 
-# 2. Interroger l'index
+# 2. Interroger l'index (dense par défaut)
 premier-test/.venv/bin/python rag/search.py "Quel est le délai de déclaration d'un écart ?"
+
+# 2b. Mode hybride (dense + lexical) ou lexical seul
+premier-test/.venv/bin/python rag/search.py "question" --mode hybride
+premier-test/.venv/bin/python rag/search.py "question" --mode lexical
 
 # 3. Évaluer le rappel et l'abstention sur C1–C6
 premier-test/.venv/bin/python rag/evaluer.py
 
 # 4. Recalibrer le seuil d'abstention
 premier-test/.venv/bin/python rag/calibrer_seuil.py
+
+# 5. Comparer dense / lexical / hybride
+premier-test/.venv/bin/python rag/evaluer.py --comparer
 ```
 
 ## Fonctionnement
@@ -37,6 +44,25 @@ premier-test/.venv/bin/python rag/calibrer_seuil.py
 - L'index est persistant dans `rag/index_qdrant/` et reconstruit à chaque
   exécution d'`index_corpus.py`.
 - `rag/index_meta.json` enregistre le modèle, la dimension et le nombre de chunks.
+
+## Recherche hybride
+
+Trois modes, sélectionnables par `--mode` :
+
+| Mode | Principe | Abstention |
+| --- | --- | --- |
+| `dense` (défaut) | similarité cosinus bge-m3 | seuil 0,65 |
+| `lexical` | BM25 SQLite FTS5, couverture de termes | non calibrée (diagnostic) |
+| `hybride` | fusion RRF des deux canaux + reranker heuristique | seuil appliqué au score dense |
+
+L'index lexical est un fichier SQLite (`rag/index_fts/corpus.sqlite`), construit
+par `rag/index_corpus.py` et exclu de Git.
+
+**Résultat mesuré sur les 18 cas** : aucun gain mesurable de l'hybride par
+rapport au dense (rappel 5/5, MRR 1,000, 13/13 abstentions dans les deux cas).
+Le corpus est trop petit et le dense sature déjà. L'hybride reste donc
+**désactivé par défaut** : il ne doit pas ajouter de complexité sans preuve.
+La comparaison devra être refaite sur le jeu de 100 cas.
 
 ## Abstention
 

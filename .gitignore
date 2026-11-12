@@ -14,4 +14,5 @@ __pycache__/
 
 # Index RAG (reconstructible)
 rag/index_qdrant/
+rag/index_fts/
 rag/index_meta.json

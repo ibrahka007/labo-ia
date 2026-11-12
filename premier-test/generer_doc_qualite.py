@@ -70,7 +70,7 @@ def construire_document():
         document,
         ["Champ", "Valeur"],
         [
-            ("Version", "1.8"),
+            ("Version", "1.9"),
             ("Date", "08/11/2026"),
             ("Statut", "Étape de comparaison documentaire validée"),
             ("Périmètre", "Projet premier-test (comparaison de fichiers texte et PDF)"),
@@ -264,6 +264,24 @@ def construire_document():
         ],
     )
     document.add_paragraph("Synthèse : 7 tests exécutés, 7 réussis, 0 échec.")
+    document.add_paragraph(
+        "Tests du pipeline RAG : 39 tests exécutés avec python3 -m unittest "
+        "discover -s rag/tests, 39 réussis, 0 échec."
+    )
+    ajouter_tableau(
+        document,
+        ["Fichier de tests", "Nombre", "Objet"],
+        [
+            ("test_rag_lib.py", "6", "Parsing Markdown, découpage, métadonnées"),
+            ("test_seuil.py", "11", "Décision d'abstention et détection de réserve"),
+            ("test_lexical.py", "13", "Index FTS5, normalisation, couverture"),
+            ("test_hybrid.py", "9", "Fusion RRF et reranker heuristique"),
+        ],
+    )
+    document.add_paragraph(
+        "Ces tests ne nécessitent ni Qdrant ni Ollama : ils s'exécutent avec la "
+        "bibliothèque standard et restent donc utilisables en intégration continue."
+    )
 
     document.add_heading("7. Comparaison AR-001 v1.0 / v2.0", level=1)
     document.add_paragraph(
@@ -617,7 +635,86 @@ def construire_document():
     ]:
         document.add_paragraph(ligne_seuil, style="List Bullet")
 
-    document.add_heading("16. Historique des révisions", level=1)
+    document.add_heading("16. Recherche hybride et reranker", level=1)
+    document.add_paragraph(
+        "Objectif : compenser la faiblesse de la recherche dense sur les valeurs "
+        "littérales (durées, seuils, identifiants) en ajoutant un canal lexical, "
+        "puis un reranker. Tout reste local, sans nouvelle dépendance."
+    )
+    ajouter_tableau(
+        document,
+        ["Composant", "Choix retenu", "Justification"],
+        [
+            (
+                "Canal lexical",
+                "BM25 via SQLite FTS5 (bibliothèque standard)",
+                "Zéro dépendance ; index reconstructible en une commande",
+            ),
+            (
+                "Normalisation",
+                "Minuscules, sans accents, ponctuation réduite",
+                "Évite les échecs sur « écart » / « ecart »",
+            ),
+            (
+                "Précision",
+                "Requête ET, repli sur OU si aucun résultat",
+                "Un terme conjugué différemment ne doit pas vider la réponse",
+            ),
+            (
+                "Fusion",
+                "Reciprocal Rank Fusion (k = 60)",
+                "Aucun paramètre à ajuster, donc pas de sur-ajustement",
+            ),
+            (
+                "Reranker",
+                "Heuristique : couverture 70 %, titre 20 %, rang 10 %",
+                "Référence mesurable avant tout modèle neuronal",
+            ),
+        ],
+    )
+    document.add_paragraph("Résultats comparés sur les 18 cas", style="Heading 2")
+    ajouter_tableau(
+        document,
+        ["Mode", "Rappel@5", "MRR", "Abstentions", "Non sécurisées"],
+        [
+            ("Dense", "5/5", "1,000", "13/13", "0"),
+            ("Lexical", "5/5", "1,000", "non calibrée", "non applicable"),
+            ("Hybride", "5/5", "1,000", "13/13", "0"),
+        ],
+    )
+    document.add_paragraph(
+        "Résultat honnête : l'hybride n'apporte aucun gain mesurable sur ce "
+        "corpus. Le rappel et le MRR sont déjà saturés en dense, et la fusion ne "
+        "modifie pas la marge C4 / C6, qui reste de 0,001."
+    )
+    document.add_paragraph("Décisions qui en découlent", style="Heading 2")
+    for decision_hybride in [
+        "Le mode dense reste le mode par défaut : aucune complexité ajoutée au "
+        "chemin de production sans preuve de gain.",
+        "L'hybride reste disponible pour expérimentation, mesuré et testé.",
+        "L'abstention conserve le signal dense calibré : le score RRF n'est pas "
+        "comparable et ne peut pas servir de seuil.",
+        "La confusion C4 / C6 n'est pas résolue par l'hybride ; elle ne le sera "
+        "pas non plus par un reranker, qui réordonne sans créer d'information.",
+    ]:
+        document.add_paragraph(decision_hybride, style="List Bullet")
+    document.add_paragraph(
+        "Conséquence pour l'analyse d'impact : le moteur ne doit pas s'appuyer "
+        "sur l'espoir d'un meilleur score, mais sur les deux garde-fous vérifiés "
+        "— le seuil d'abstention et la détection de réserve. Une réponse hors "
+        "corpus reste refusée (13/13) et aucune réponse n'est produite sans "
+        "réserve lorsqu'une hypothèse est en jeu (0 non sécurisée)."
+    )
+    document.add_paragraph("Limites", style="Heading 2")
+    for limite_hybride in [
+        "18 cas seulement : insuffisant pour trancher entre dense et hybride.",
+        "Le reranker neuronal local n'a pas été installé : il ajouterait 1,2 Go.",
+        "Le mode lexical n'a pas de seuil calibré ; il ne sert qu'au diagnostic.",
+        "La comparaison devra être refaite sur le jeu de 100 cas (issue 13).",
+    ]:
+        document.add_paragraph(limite_hybride, style="List Bullet")
+
+    document.add_heading("17. Historique des révisions", level=1)
     ajouter_tableau(
         document,
         ["Version", "Date", "Nature de la modification"],
@@ -676,6 +773,13 @@ def construire_document():
                 "11/11/2026",
                 "Correction du chargement des sous-agents (couleurs) et du modèle "
                 "par défaut de l'agent Plan ; anomalies A7 et A8 documentées.",
+            ),
+            (
+                "1.9",
+                "12/11/2026",
+                "Ajout de la recherche hybride (BM25 FTS5, fusion RRF, reranker "
+                "heuristique) et comparaison dense / lexical / hybride sur 18 cas ; "
+                "aucun gain mesuré, mode dense conservé par défaut.",
             ),
         ],
     )
@@ -736,6 +840,20 @@ def construire_document():
         "Calibration du seuil d'abstention sur les cas connus et hors corpus."
     )
     ajouter_bloc_code(document, RAG / "calibrer_seuil.py")
+
+    document.add_page_break()
+    document.add_heading("Annexe I — rag/lexical.py", level=1)
+    document.add_paragraph(
+        "Index lexical BM25 (SQLite FTS5) : normalisation, jetons et recherche."
+    )
+    ajouter_bloc_code(document, RAG / "lexical.py")
+
+    document.add_page_break()
+    document.add_heading("Annexe J — rag/hybrid.py", level=1)
+    document.add_paragraph(
+        "Fusion RRF des canaux dense et lexical, puis reranker heuristique."
+    )
+    ajouter_bloc_code(document, RAG / "hybrid.py")
 
     document.add_paragraph()
     document.add_paragraph(

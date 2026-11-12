@@ -16,3 +16,4 @@ __pycache__/
 rag/index_qdrant/
 rag/index_fts/
 rag/index_meta.json
+impact/rapports/

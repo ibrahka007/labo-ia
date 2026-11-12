@@ -70,7 +70,7 @@ def construire_document():
         document,
         ["Champ", "Valeur"],
         [
-            ("Version", "1.9"),
+            ("Version", "1.10"),
             ("Date", "08/11/2026"),
             ("Statut", "Étape de comparaison documentaire validée"),
             ("Périmètre", "Projet premier-test (comparaison de fichiers texte et PDF)"),
@@ -276,6 +276,20 @@ def construire_document():
             ("test_seuil.py", "11", "Décision d'abstention et détection de réserve"),
             ("test_lexical.py", "13", "Index FTS5, normalisation, couverture"),
             ("test_hybrid.py", "9", "Fusion RRF et reranker heuristique"),
+        ],
+    )
+    document.add_paragraph(
+        "Tests du moteur d'impact : 22 tests exécutés avec python3 -m unittest "
+        "discover -s impact/tests, 22 réussis, 0 échec."
+    )
+    ajouter_tableau(
+        document,
+        ["Famille de tests", "Nombre", "Objet"],
+        [
+            ("Valeurs et changements", "6", "Extraction des nombres, diff, filtrage"),
+            ("Qualification", "6", "Aligné, à mettre à jour, réserve, doute"),
+            ("Analyse", "4", "Abstention, tri, enchaînement, absence d'écriture"),
+            ("Rapport et CLI", "6", "Format Markdown, codes de sortie"),
         ],
     )
     document.add_paragraph(
@@ -714,7 +728,115 @@ def construire_document():
     ]:
         document.add_paragraph(limite_hybride, style="List Bullet")
 
-    document.add_heading("17. Historique des révisions", level=1)
+    document.add_heading("17. Moteur d'analyse d'impact", level=1)
+    document.add_paragraph(
+        "Objectif du laboratoire : à partir d'un changement documentaire, "
+        "identifier les passages du corpus qui risquent d'être concernés, avec "
+        "preuve et niveau de confiance. Le moteur ne modifie jamais un "
+        "document : il produit un rapport soumis à validation humaine."
+    )
+    document.add_paragraph("Chaîne de traitement", style="Heading 2")
+    for etape_impact in [
+        "Changement décrit par l'utilisateur, ou déduit d'un diff entre deux "
+        "versions (difflib).",
+        "Filtrage des métadonnées et des titres Markdown : ils changent à "
+        "chaque version sans modifier une règle.",
+        "Recherche des passages concernés, avec le seuil d'abstention du "
+        "pipeline RAG.",
+        "Qualification de chaque passage : aligné, à mettre à jour, réserve, "
+        "à vérifier ou preuve insuffisante.",
+        "Rapport Markdown avec citation (document, version, section) et "
+        "validation humaine obligatoire.",
+    ]:
+        document.add_paragraph(etape_impact, style="List Number")
+    ajouter_tableau(
+        document,
+        ["Type", "Signification", "Confiance"],
+        [
+            (
+                "aligné",
+                "Le passage énonce déjà la nouvelle valeur dans un contexte "
+                "comparable",
+                "haute",
+            ),
+            (
+                "à mettre à jour",
+                "Le passage reprend la règle avec une valeur différente",
+                "haute ou moyenne",
+            ),
+            (
+                "réserve",
+                "Le passage présente la valeur comme une hypothèse à confirmer",
+                "basse",
+            ),
+            (
+                "à vérifier",
+                "Recouvrement partiel : la portée du changement reste à établir",
+                "basse",
+            ),
+            (
+                "preuve insuffisante",
+                "Aucun passage au-dessus du seuil : aucune conclusion",
+                "basse",
+            ),
+        ],
+    )
+    document.add_paragraph("Deux règles de prudence", style="Heading 2")
+    document.add_paragraph(
+        "Première règle : un nombre identique ne suffit pas. « 5 ans » pour les "
+        "écarts qualité et « 5 ans » pour les dossiers RH sont deux règles "
+        "distinctes. La qualification « aligné » exige donc aussi une "
+        "couverture suffisante des termes du changement."
+    )
+    document.add_paragraph(
+        "Seconde règle : une réserve prime sur toute autre qualification. Un "
+        "passage qui dit « hypothèse à confirmer » n'est jamais présenté comme "
+        "une règle établie, même si sa valeur correspond."
+    )
+    document.add_paragraph("Vérifications réalisées", style="Heading 2")
+    ajouter_tableau(
+        document,
+        ["Scénario", "Résultat observé"],
+        [
+            (
+                "Changement « ouvrir la fiche sous 24 heures »",
+                "PHA-001 section 3 qualifié « à mettre à jour » (haute) ; "
+                "section 5 « à vérifier » (basse)",
+            ),
+            (
+                "Changement sur les dossiers RH (5 ans)",
+                "Abstention à 0,65 ; avec seuil abaissé à 0,60, PHA-004 est "
+                "qualifié « réserve », jamais « aligné »",
+            ),
+            (
+                "Changement hors corpus (budget de formation)",
+                "« preuve insuffisante », aucune conclusion produite",
+            ),
+            (
+                "Diff PHA-001 v1.0 / v2.0",
+                "Changements de métadonnées écartés ; seules les règles "
+                "modifiées sont analysées",
+            ),
+        ],
+    )
+    document.add_paragraph(
+        "Garantie d'absence d'écriture : un test vérifie que l'analyse ne "
+        "modifie aucun fichier. Le seul écrit possible est le rapport demandé "
+        "explicitement avec l'option --sortie."
+    )
+    document.add_paragraph("Limites", style="Heading 2")
+    for limite_impact in [
+        "Le diff travaille ligne à ligne : une reformulation complète produit "
+        "beaucoup de changements.",
+        "Aucune équivalence d'unités : « 1 jour » n'est pas reconnu comme "
+        "« 24 heures ».",
+        "Pas de détection de contradiction entre deux documents du corpus.",
+        "La qualification reste heuristique : elle guide la relecture, elle ne "
+        "la remplace pas.",
+    ]:
+        document.add_paragraph(limite_impact, style="List Bullet")
+
+    document.add_heading("18. Historique des révisions", level=1)
     ajouter_tableau(
         document,
         ["Version", "Date", "Nature de la modification"],
@@ -780,6 +902,12 @@ def construire_document():
                 "Ajout de la recherche hybride (BM25 FTS5, fusion RRF, reranker "
                 "heuristique) et comparaison dense / lexical / hybride sur 18 cas ; "
                 "aucun gain mesuré, mode dense conservé par défaut.",
+            ),
+            (
+                "1.10",
+                "12/11/2026",
+                "Ajout du moteur d'analyse d'impact : qualification des passages, "
+                "rapport Markdown, garantie d'absence d'écriture ; 22 tests.",
             ),
         ],
     )
@@ -854,6 +982,20 @@ def construire_document():
         "Fusion RRF des canaux dense et lexical, puis reranker heuristique."
     )
     ajouter_bloc_code(document, RAG / "hybrid.py")
+
+    document.add_page_break()
+    document.add_heading("Annexe K — impact/moteur.py", level=1)
+    document.add_paragraph(
+        "Extraction des changements et qualification des passages impactés."
+    )
+    ajouter_bloc_code(document, DOSSIER.parent / "impact" / "moteur.py")
+
+    document.add_page_break()
+    document.add_heading("Annexe L — impact/analyser.py", level=1)
+    document.add_paragraph(
+        "Interface en ligne de commande du moteur d'analyse d'impact."
+    )
+    ajouter_bloc_code(document, DOSSIER.parent / "impact" / "analyser.py")
 
     document.add_paragraph()
     document.add_paragraph(

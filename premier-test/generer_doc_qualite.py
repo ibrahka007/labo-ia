@@ -496,21 +496,21 @@ def construire_document():
         document,
         ["Statut", "Nombre", "Contenu"],
         [
-            ("Done", "7", "Environnement, prototype de comparaison, gestion des "
-                          "erreurs, document qualité, corpus fictif, indexation "
-                          "RAG, sous-agents"),
-            ("Ready", "1", "Moteur d'analyse d'impact au-dessus du RAG"),
-            ("Backlog", "7", "Recherche hybride, seuil d'abstention, "
-                             "Word/Excel et OCR, interface web, jeu de 100 cas, "
+            ("Done", "10", "Environnement, prototype de comparaison, gestion "
+                           "des erreurs, document qualité, corpus fictif, "
+                           "indexation RAG, sous-agents, recherche hybride, "
+                           "seuil d'abstention, moteur d'analyse d'impact"),
+            ("Ready", "0", "Aucune étape prête à démarrer"),
+            ("Backlog", "5", "Word/Excel et OCR, interface web, jeu de 100 cas, "
                              "automatisation du document qualité, intégration "
                              "continue"),
-            ("Total", "15", "7 étapes terminées, 8 actions ouvertes"),
+            ("Total", "15", "10 étapes terminées, 5 actions ouvertes"),
         ],
     )
     document.add_paragraph("Répartition par priorité :")
     for ligne_priorite in [
-        "P0 (critique) : indexation RAG (terminée), seuil d'abstention, "
-        "moteur d'analyse d'impact.",
+        "P0 (critique) : indexation RAG, seuil d'abstention et moteur "
+        "d'analyse d'impact — tous terminés.",
         "P1 (important) : prototype de comparaison, gestion des erreurs, "
         "document qualité, corpus fictif, recherche hybride, interface web, "
         "jeu de 100 cas.",

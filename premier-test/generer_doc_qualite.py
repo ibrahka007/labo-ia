@@ -70,7 +70,7 @@ def construire_document():
         document,
         ["Champ", "Valeur"],
         [
-            ("Version", "1.10"),
+            ("Version", "1.11"),
             ("Date", "08/11/2026"),
             ("Statut", "Étape de comparaison documentaire validée"),
             ("Périmètre", "Projet premier-test (comparaison de fichiers texte et PDF)"),
@@ -133,6 +133,28 @@ def construire_document():
                 "Bibliothèques standard de Python",
             ),
         ],
+    )
+
+    document.add_paragraph(
+        "Point d'entrée pour les agents", style="Heading 2"
+    )
+    document.add_paragraph(
+        "Le dépôt contient un fichier AGENTS.md à la racine, lu par les agents "
+        "de développement (OpenCode, Copilot) ; CLAUDE.md y renvoie pour Claude. "
+        "Il fixe les règles non négociables : traitement entièrement local, "
+        "corpus fictif, dépôt public, absence d'écriture par le moteur d'impact, "
+        "et rejet de toute complexité sans gain mesuré."
+    )
+    document.add_paragraph(
+        "Il documente aussi les commandes vérifiées, l'architecture des dossiers "
+        "et l'état mesuré du système, y compris ses fragilités. Cette dernière "
+        "partie est délibérée : elle empêche un agent d'interpréter un plafond "
+        "d'évaluation comme une supériorité d'un mode de recherche sur un autre."
+    )
+    document.add_paragraph(
+        "Le fichier ne contient volontairement aucune liste de tâches : le "
+        "backlog reste sur le board GitHub, afin d'éviter deux sources de "
+        "vérité divergentes."
     )
 
     document.add_heading("4. Déroulé des étapes", level=1)
@@ -908,6 +930,12 @@ def construire_document():
                 "12/11/2026",
                 "Ajout du moteur d'analyse d'impact : qualification des passages, "
                 "rapport Markdown, garantie d'absence d'écriture ; 22 tests.",
+            ),
+            (
+                "1.11",
+                "14/11/2026",
+                "Ajout de AGENTS.md et CLAUDE.md : point d'entrée unique pour "
+                "les agents, règles non négociables et état mesuré du système.",
             ),
         ],
     )
